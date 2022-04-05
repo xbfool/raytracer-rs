@@ -1,16 +1,17 @@
 mod ray;
 
-use std::ops::Div;
-use nalgebra::{Point3, Vector3};
-use ray::Ray;
+
+
 
 pub mod Prelude {
+
+    pub use std::ops::Div;
     extern crate nalgebra as na;
 
-    use na::{Vector3};
-    use crate::Ray;
+    pub use na::{Vector3, Point3};
+    pub use crate::ray::Ray;
 
-    type Color = Vector3<f64>;
+    pub type Color = Vector3<f64>;
 
     pub fn write_color(color :&Color){
         print!("{} {} {}\n", (255.999 * color.x) as i32,
@@ -18,12 +19,27 @@ pub mod Prelude {
                (255.999 * color.z) as i32)
     }
 
+
+
+    pub fn hit_sphere(center:Point3<f64>, radius: f64, r: &Ray) -> bool{
+        let oc = r.origin - center;
+        let a = r.dir.dot(&r.dir);
+        let b = 2. * oc.dot(&r.dir);
+        let c = oc.dot(&oc) - radius * radius;
+        let discriminant = b * b  - 4. * a * c;
+        return discriminant > 0.
+    }
+
     pub fn ray_color(ray: &Ray) -> Color{
+        if hit_sphere(Point3::new(0., 0., -1.), 0.5, ray) {
+            return  Color::new(1., 0., 0.);
+        }
         let unit_direction = ray.dir.normalize();
         let t = 0.5 * (unit_direction.y + 1.0);
-        return (1.0 - t) * Color::new(1.0, 1.0, 1.0) +
+        return (1.0 - t) * Color::new(1.0, 1.0, 0.0) +
             t * Color::new(0.5, 0.7, 1.0)
     }
+
 }
 
 use crate::Prelude::*;
