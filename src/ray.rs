@@ -1,13 +1,13 @@
 use nalgebra::Vector3;
 
-pub type Point = nalgebra::Point<f64, 3>;
+pub type Point = nalgebra::Vector3<f64>;
 pub struct Ray {
     pub origin: Point,
     pub dir: Vector3<f64>
 }
 
 impl Ray {
-    fn at(&self) -> Point {
-        return self.origin + self.dir;
+    pub fn at(&self, t: f64) -> Point {
+        return self.origin + self.dir * t;
     }
 }

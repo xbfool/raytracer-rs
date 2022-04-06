@@ -4,7 +4,6 @@ mod ray;
 
 
 pub mod Prelude {
-
     pub use std::ops::Div;
     extern crate nalgebra as na;
 
@@ -21,18 +20,24 @@ pub mod Prelude {
 
 
 
-    pub fn hit_sphere(center:Point3<f64>, radius: f64, r: &Ray) -> bool{
+    pub fn hit_sphere(center:Vector3<f64>, radius: f64, r: &Ray) -> f64{
         let oc = r.origin - center;
         let a = r.dir.dot(&r.dir);
         let b = 2. * oc.dot(&r.dir);
         let c = oc.dot(&oc) - radius * radius;
         let discriminant = b * b  - 4. * a * c;
-        return discriminant > 0.
+        if discriminant < 0. {
+            return -1.0
+        }else{
+            return (-b - discriminant.sqrt())/ (2.0 * a)
+        }
     }
 
     pub fn ray_color(ray: &Ray) -> Color{
-        if hit_sphere(Point3::new(0., 0., -1.), 0.5, ray) {
-            return  Color::new(1., 0., 0.);
+        let t =  hit_sphere(Vector3::new(0., 0., -1.), 0.5, ray);
+        if t > 0.0 {
+            let N = (ray.at(t) - Vector3::new(0., 0., -1.)).normalize();
+            return 0.5 * Color::new(N[0] + 1., N[1] + 1., N[2] + 1.);
         }
         let unit_direction = ray.dir.normalize();
         let t = 0.5 * (unit_direction.y + 1.0);
@@ -55,7 +60,7 @@ fn main() {
     let viewport_width = aspect_ratio * viewport_height;
     let focal_length = 1.0;
 
-    let origin: Point3<f64> = Point3::new(0., 0., 0.);
+    let origin: Vector3<f64> = Vector3::new(0., 0., 0.);
     let horizontal = Vector3::new(viewport_width, 0.0, 0.0);
     let vertical = Vector3::new(0.0, viewport_height, 0.0);
     let lower_left_corner = origin - horizontal.div(2.0) - vertical.div(2.0) - Vector3::new(0., 0., focal_length);
