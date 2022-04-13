@@ -1,5 +1,6 @@
 mod ray;
 mod sphere;
+mod hittable_list;
 
 
 pub mod prelude {
