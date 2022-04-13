@@ -28,12 +28,15 @@ impl Hittable for Sphere {
             }
         }
 
-        let ret = HitRecord{
+        let mut rec = HitRecord{
             p: r.at(root),
-            normal: (r.at(root) - self.center) / self.radius,
-            t: root
+            normal: Default::default(),
+            t: root,
+            front_face: false
         };
+        let outward_normal = (rec.p - self.center) / self.radius;
+        rec.set_face_normal(r, &outward_normal);
 
-        return Some(ret);
+        return Some(rec);
     }
 }
