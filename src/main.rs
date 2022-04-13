@@ -1,14 +1,13 @@
 mod ray;
+mod sphere;
 
 
-
-
-pub mod Prelude {
+pub mod prelude {
     pub use std::ops::Div;
     extern crate nalgebra as na;
 
     pub use na::{Vector3, Point3};
-    pub use crate::ray::Ray;
+    pub use crate::ray::*;
 
     pub type Color = Vector3<f64>;
 
@@ -21,10 +20,11 @@ pub mod Prelude {
 
 
     pub fn hit_sphere(center:Vector3<f64>, radius: f64, r: &Ray) -> f64{
-        let oc = r.origin - center;
+        let oc = &r.origin - center;
         let a = r.dir.dot(&r.dir);
         let half_b = oc.dot(&r.dir);
-        let c = oc.dot(&oc) - radius * radius;
+        let c = oc.dot(&oc) -
+            &radius * &radius;
         let discriminant = half_b * half_b  - a * c;
         if discriminant < 0. {
             return -1.0
@@ -36,8 +36,8 @@ pub mod Prelude {
     pub fn ray_color(ray: &Ray) -> Color{
         let t =  hit_sphere(Vector3::new(0., 0., -1.), 0.5, ray);
         if t > 0.0 {
-            let N = (ray.at(t) - Vector3::new(0., 0., -1.)).normalize();
-            return 0.5 * Color::new(N[0] + 1., N[1] + 1., N[2] + 1.);
+            let n = (ray.at(t) - Vector3::new(0., 0., -1.)).normalize();
+            return 0.5 * Color::new(n[0] + 1., n[1] + 1., n[2] + 1.);
         }
         let unit_direction = ray.dir.normalize();
         let t = 0.5 * (unit_direction.y + 1.0);
@@ -47,7 +47,7 @@ pub mod Prelude {
 
 }
 
-use crate::Prelude::*;
+use crate::prelude::*;
 
 fn main() {
     //println!("Hello, world!");
