@@ -1,10 +1,10 @@
 use crate::prelude::*;
 
-pub struct Hittable_list {
+pub struct HittableList {
     pub objects : Vec<Box<dyn Hittable>>
 }
 
-impl Hittable_list {
+impl HittableList {
     pub fn clear(&mut self) {
         self.objects.clear();
     }
@@ -14,7 +14,7 @@ impl Hittable_list {
     }
 }
 
-impl Hittable for Hittable_list {
+impl Hittable for HittableList {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
         todo!()
     }
